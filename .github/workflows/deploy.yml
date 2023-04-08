@@ -16,11 +16,19 @@ jobs:
       image: node:16  
     env:
       # change for trigger
-      MONGODB_CONNECTION_PROTOCOL: mongodb+srv
-      MONGODB_CLUSTER_ADDRESS: cluster0.qbcxnbr.mongodb.net
-      MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
-      MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
+      MONGODB_CONNECTION_PROTOCOL: mongodb # Need to change the protocol
+      MONGODB_CLUSTER_ADDRESS: mongodb
+      MONGODB_USERNAME: root # ${{ secrets.MONGODB_USERNAME }}
+      MONGODB_PASSWORD: example # ${{ secrets.MONGODB_PASSWORD }}
       PORT: 8080
+    services: # More than one service can be added
+      mongodb: # This name/label could be anything
+        image: mongo # Official Docker MongoDB image
+        env: # This env values will not be online after 
+             # the workflow finished.
+             # Hance, these credentials are not problem.    
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: example
     steps:
       - name: Get Code
         uses: actions/checkout@v3
@@ -32,7 +40,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Run server
-        run: npm start & npx wait-on http://127.0.0.1:$PORT # requires MongoDB Atlas to accept requests from anywhere!
+        # requires MongoDB Atlas to accept requests from anywhere!
+        run: npm start & npx wait-on http://127.0.0.1:$PORT 
       - name: Run tests
         run: npm test
       - name: Output information
