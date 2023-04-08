@@ -12,6 +12,8 @@ jobs:
   test:
     environment: testing
     runs-on: ubuntu-latest
+    container: # node:16
+      image: node:16  
     env:
       # change for trigger
       MONGODB_CONNECTION_PROTOCOL: mongodb+srv
